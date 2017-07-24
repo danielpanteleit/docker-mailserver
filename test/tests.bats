@@ -42,8 +42,19 @@ load 'test_helper/bats-assert/load'
 }
 
 @test "checking configuration: hostname/domainname override: check headers of received mail" {
-  run docker exec mail_override_hostname /bin/sh -c "ls -A /var/mail/localhost.localdomain/user1/new | wc -l | grep 1"
+  for i in {1..30}; do
+    sleep 1
+    run docker exec mail_override_hostname /bin/bash -c "set -o pipefail; ls -A /var/mail/localhost.localdomain/user1/new | wc -l"
+    if (( status == 0 )); then
+      break
+    fi
+  done
+  if (( i == 30 )); then
+      false
+  fi
   assert_success
+  assert_output 1
+
   run docker exec mail_override_hostname /bin/sh -c "cat /var/mail/localhost.localdomain/user1/new/* | grep mail.my-domain.com"
   assert_success
 
@@ -1090,8 +1101,16 @@ load 'test_helper/bats-assert/load'
 
 @test "checking dovecot: ldap mail delivery works" {
   run docker exec mail_with_ldap /bin/sh -c "sendmail -f user@external.tld some.user@localhost.localdomain < /tmp/docker-mailserver-test/email-templates/test-email.txt"
-  sleep 10
-  run docker exec mail_with_ldap /bin/sh -c "ls -A /var/mail/localhost.localdomain/some.user/new | wc -l"
+  for i in {1..30}; do
+    sleep 1
+    run docker exec mail_with_ldap /bin/bash -c "set -o pipefail; ls -A /var/mail/localhost.localdomain/some.user/new | wc -l"
+    if (( status == 0 )); then
+      break
+    fi
+  done
+  if (( i == 30 )); then
+      false
+  fi
   assert_success
   assert_output 1
 }
