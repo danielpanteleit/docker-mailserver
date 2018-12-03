@@ -1,0 +1,30 @@
+include Makefile
+
+run:
+	# no containers
+
+generate-accounts-after-run:
+	docker run --rm -e MAIL_USER=added@localhost.localdomain -e MAIL_PASS=mypassword -t $(NAME) /bin/sh -c 'echo "$$MAIL_USER|$$(doveadm pw -s SHA512-CRYPT -u $$MAIL_USER -p $$MAIL_PASS)"' >> test/config/postfix-accounts.cf
+
+	sleep 10
+
+fixtures:
+	# No fixtures
+
+tests:
+	# Start tests
+	./test/bats/bin/bats test/tests_run.bats
+
+clean:
+	# Remove running test containers
+	@if [ -d config.bak ]; then\
+		rm -rf config ;\
+		mv config.bak config ;\
+	fi
+	@if [ -d testconfig.bak ]; then\
+		sudo rm -rf test/config ;\
+		mv testconfig.bak test/config ;\
+	fi
+	-sudo rm -rf test/onedir
+	-sudo rm -rf test/alias
+	-sudo rm -rf test/relay
