@@ -66,15 +66,6 @@ run:
 		-e DMS_DEBUG=0 \
 		-h mail.my-domain.com -t $(NAME)
 	sleep 15
-	docker run -d --name mail_pop3 \
-		-v "`pwd`/test/config":/tmp/docker-mailserver \
-		-v "`pwd`/test":/tmp/docker-mailserver-test \
-		-v "`pwd`/test/config/letsencrypt":/etc/letsencrypt/live \
-		-e ENABLE_POP3=1 \
-		-e DMS_DEBUG=0 \
-		-e SSL_TYPE=letsencrypt \
-		-h mail.my-domain.com -t $(NAME)
-	sleep 15
 	docker run -d --name mail_smtponly \
 		-v "`pwd`/test/config":/tmp/docker-mailserver \
 		-v "`pwd`/test":/tmp/docker-mailserver-test \
@@ -280,7 +271,6 @@ clean:
 	-docker rm -f \
 		mail \
 		mail_privacy \
-		mail_pop3 \
 		mail_smtponly \
 		mail_smtponly_without_config \
 		mail_fail2ban \
