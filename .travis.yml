@@ -1,60 +1,33 @@
+branches:
+  except:
+  - donttestme
+language: bash
+sudo: required
+services:
+- docker
+install:
+- travis_retry travis_wait make build-no-cache
+after_script:
+- make clean
+
+
 matrix:
   include:
-    - branches:
-        except:
-        - donttestme
-      language: bash
-      sudo: required
-      services:
-      - docker
-      install:
-      - travis_retry travis_wait make build-no-cache
+    - name: "common tests"
       script:
       - make generate-accounts run generate-accounts-after-run fixtures tests
-      after_script:
-      - make clean
 
-    - branches:
-        except:
-        - donttestme
-      language: bash
-      sudo: required
-      services:
-      - docker
-      install:
-      - travis_retry travis_wait make build-no-cache
+    - name: "override_hostname tests"
       script:
       - make -f Makefile.override_hostname generate-accounts run generate-accounts-after-run fixtures tests
-      after_script:
-      - make clean
 
-    - branches:
-        except:
-        - donttestme
-      language: bash
-      sudo: required
-      services:
-      - docker
-      install:
-      - travis_retry travis_wait make build-no-cache
+    - name: "pop3 tests"
       script:
       - make -f Makefile.pop3 generate-accounts run generate-accounts-after-run fixtures tests
-      after_script:
-      - make clean
 
-    - branches:
-        except:
-        - donttestme
-      language: bash
-      sudo: required
-      services:
-      - docker
-      install:
-      - travis_retry travis_wait make build-no-cache
+    - name: "docker run tests"
       script:
       - make -f Makefile.run generate-accounts run generate-accounts-after-run fixtures tests
-      after_script:
-      - make clean
 
 #notifications:
 #  slack:
