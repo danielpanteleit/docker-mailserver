@@ -91,16 +91,6 @@ run:
 		-e OVERRIDE_HOSTNAME=mail.mydomain.com \
 		-t $(NAME)
 	sleep 15
-	docker run -d --name mail_override_hostname \
-		-v "`pwd`/test/config":/tmp/docker-mailserver \
-		-v "`pwd`/test":/tmp/docker-mailserver-test \
-		-e PERMIT_DOCKER=network \
-		-e DMS_DEBUG=0 \
-		-e ENABLE_SRS=1 \
-		-e OVERRIDE_HOSTNAME=mail.my-domain.com \
-		-h unknown.domain.tld \
-		-t $(NAME)
-	sleep 15
 	docker run -d --name mail_domainname \
 		-v "`pwd`/test/config":/tmp/docker-mailserver \
 		-v "`pwd`/test":/tmp/docker-mailserver-test \
@@ -278,7 +268,6 @@ fixtures:
 	# postfix virtual transport lmtp
 	docker exec mail_lmtp_ip /bin/sh -c "nc 0.0.0.0 25 < /tmp/docker-mailserver-test/email-templates/existing-user1.txt"
 	docker exec mail_privacy /bin/sh -c "openssl s_client -quiet -starttls smtp -connect 0.0.0.0:587 < /tmp/docker-mailserver-test/email-templates/send-privacy-email.txt"
-	docker exec mail_override_hostname /bin/sh -c "nc 0.0.0.0 25 < /tmp/docker-mailserver-test/email-templates/existing-user1.txt"
 	# Wait for mails to be analyzed
 	sleep 80
 
@@ -306,7 +295,6 @@ clean:
 		mail_with_postgrey \
 		mail_undef_spam_subject \
 		mail_postscreen \
-		mail_override_hostname \
 		mail_domainname \
 		mail_srs_domainname \
 		mail_with_relays
