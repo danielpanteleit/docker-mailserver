@@ -33,7 +33,7 @@ matrix:
       install:
       - travis_retry travis_wait make build-no-cache
       script:
-      - make -f Makefile_override_hostname generate-accounts run generate-accounts-after-run fixtures tests
+      - make -f Makefile.override_hostname generate-accounts run generate-accounts-after-run fixtures tests
       after_script:
       - make clean
       #notifications:
