@@ -21,11 +21,12 @@ def mail_server():
         ipaddress = output[0]["NetworkSettings"]["IPAddress"]
         yield ipaddress
     finally:
+        subprocess.check_call("docker ps -a", shell=True)
         subprocess.check_call("docker rm -f mail_pop3", shell=True)
 
 
 def test_server_is_ready(mail_server):
-    for i in range(20):
+    for i in range(60):
         time.sleep(0.5)
         try:
             output = subprocess.check_output('docker exec mail_pop3 /bin/bash -c "nc -w 1 0.0.0.0 110"', shell=True,
